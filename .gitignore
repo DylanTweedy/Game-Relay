@@ -1,0 +1,22 @@
+﻿# Build outputs
+**/bin/
+**/obj/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Logs
+**/Logs/*.log
+
+# OS
+Thumbs.db
+Desktop.ini

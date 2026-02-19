@@ -1,0 +1,78 @@
+<Window x:Class="Relay.UI.LaunchOverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Relay Launch"
+        Width="500"
+        Height="410"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="Manual"
+        Loaded="Window_Loaded">
+    <Border Background="#F4F6F7" BorderBrush="#222" BorderThickness="1" CornerRadius="10" Padding="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="TitleText"
+                       Grid.Row="0"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Text="Launching..." />
+
+            <TextBlock x:Name="StatusText"
+                       Grid.Row="1"
+                       Margin="0,6,0,6"
+                       Foreground="#333"
+                       Text="Initializing..." />
+
+            <TextBlock x:Name="TokenSummaryText"
+                       Grid.Row="2"
+                       Margin="0,0,0,8"
+                       Foreground="#555"
+                       Text="Tokens: none" />
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,0,0,8">
+                <TextBlock Text="Target: " FontWeight="SemiBold" />
+                <TextBlock x:Name="TargetCheckText" Text="Unknown" />
+                <TextBlock Text="    WorkDir: " FontWeight="SemiBold" />
+                <TextBlock x:Name="WorkDirCheckText" Text="Unknown" />
+            </StackPanel>
+
+            <ScrollViewer Grid.Row="4" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Raw Target" FontWeight="SemiBold" />
+                    <TextBlock x:Name="RawTargetText" TextWrapping="Wrap" Margin="0,0,0,5" />
+                    <TextBlock Text="Raw Args" FontWeight="SemiBold" />
+                    <TextBlock x:Name="RawArgsText" TextWrapping="Wrap" Margin="0,0,0,5" />
+                    <TextBlock Text="Raw WorkDir" FontWeight="SemiBold" />
+                    <TextBlock x:Name="RawWorkDirText" TextWrapping="Wrap" Margin="0,0,0,5" />
+                    <TextBlock Text="Resolved Target" FontWeight="SemiBold" />
+                    <TextBlock x:Name="ResolvedTargetText" TextWrapping="Wrap" Margin="0,0,0,5" />
+                    <TextBlock Text="Resolved Args" FontWeight="SemiBold" />
+                    <TextBlock x:Name="ResolvedArgsText" TextWrapping="Wrap" Margin="0,0,0,5" />
+                    <TextBlock Text="Resolved WorkDir" FontWeight="SemiBold" />
+                    <TextBlock x:Name="ResolvedWorkDirText" TextWrapping="Wrap" Margin="0,0,0,5" />
+                    <TextBlock Text="Exception" FontWeight="SemiBold" />
+                    <TextBlock x:Name="ExceptionTextBlock" TextWrapping="Wrap" Foreground="#9A1B1B" />
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                <Button Content="Open Log" Width="80" Margin="0,0,6,0" Click="OpenLog_Click" />
+                <Button Content="Copy Command" Width="98" Margin="0,0,6,0" Click="CopyResolvedCommand_Click" />
+                <Button Content="Open Folder" Width="90" Margin="0,0,6,0" Click="OpenFolder_Click" />
+                <Button Content="Close" Width="70" Click="Close_Click" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,353 @@
+﻿<Window x:Class="Relay.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Relay Manager"
+        Height="820"
+        Width="1360"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+    <Grid Margin="12">
+        <TabControl>
+            <TabItem Header="Import Shortcuts">
+                <Grid Margin="0,4,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="170" />
+                            <ColumnDefinition Width="110" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Import folder:" />
+                        <TextBox Grid.Column="1" x:Name="ShortcutImportRootTextBox" IsReadOnly="True" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Button Grid.Column="2" Content="Browse" Width="80" Margin="0,0,8,0" Click="BrowseShortcutImportRoot_Click" />
+                        <Button Grid.Column="3" Content="Scan Shortcuts" Width="110" Margin="0,0,8,0" Click="ScanShortcuts_Click" />
+                        <Button Grid.Column="4" Content="Cancel" Width="90" Margin="0,0,8,0" Click="CancelShortcutScan_Click" />
+                        <Button Grid.Column="5" Content="Add Selected to Registry" Width="160" Margin="0,0,8,0" Click="AddSelectedShortcutToRegistry_Click" />
+                        <Button Grid.Column="6" Content="Add All Valid" Width="100" Click="AddAllValidShortcuts_Click" />
+                    </Grid>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="180" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Grid.Column="0" x:Name="IncludeOtherValidCheckBox" Content="Include Other valid targets" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1" x:Name="ShortcutsStatusText" VerticalAlignment="Center" Margin="12,0,0,0" Text="Ready." />
+                        <ProgressBar Grid.Column="2" x:Name="ShortcutScanProgressBar" Height="14" Minimum="0" Maximum="100" Value="0" Visibility="Collapsed" />
+                    </Grid>
+
+                    <Border Grid.Row="2" BorderBrush="#DDD" BorderThickness="1" Padding="8" Margin="0,0,0,8">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="80" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Text="Launch Target:" />
+                            <TextBox Grid.Row="0" Grid.Column="1" x:Name="ShortcutLaunchTargetTextBox" Margin="0,0,8,6" />
+                            <Button Grid.Row="0" Grid.Column="2" Content="Browse" Width="70" Margin="0,0,0,6" Click="BrowseShortcutLaunchTarget_Click" />
+
+                            <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Arguments:" />
+                            <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ShortcutLaunchArgsTextBox" Margin="0,0,0,6" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Working Dir:" />
+                            <TextBox Grid.Row="2" Grid.Column="1" x:Name="ShortcutLaunchWorkingDirTextBox" Margin="0,0,8,0" />
+                            <Button Grid.Row="2" Grid.Column="2" Content="Apply To Selected" Width="110" Click="ApplyShortcutEditorToSelectedRow_Click" />
+                        </Grid>
+                    </Border>
+
+                    <DataGrid Grid.Row="3"
+                              x:Name="ShortcutImportGrid"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              SelectionMode="Extended"
+                              SelectionUnit="FullRow"
+                              SelectionChanged="ShortcutImportGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Display Name" Binding="{Binding DisplayName}" Width="160" />
+                            <DataGridTextColumn Header="TargetPath" Binding="{Binding TargetPath}" Width="260" />
+                            <DataGridTextColumn Header="Arguments" Binding="{Binding Arguments}" Width="200" />
+                            <DataGridTextColumn Header="WorkingDirectory" Binding="{Binding WorkingDirectory}" Width="240" />
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="130" />
+                            <DataGridTextColumn Header="Kind" Binding="{Binding Kind}" Width="110" />
+                            <DataGridCheckBoxColumn Header="Exists" Binding="{Binding TargetExists}" Width="70" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Scan Games">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="90" />
+                            <ColumnDefinition Width="90" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Scan root:" />
+                        <TextBox Grid.Column="1" x:Name="ScanRootTextBox" IsReadOnly="True" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Button Grid.Column="2" Content="Browse" Width="80" Margin="0,0,8,0" Click="BrowseScanRoot_Click" />
+                        <Button Grid.Column="3" Content="Scan" Width="80" Click="ScanNow_Click" />
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+                        <CheckBox x:Name="IncrementalScanCheckBox" Content="Incremental scan" IsChecked="True" Margin="0,0,12,0" />
+                        <CheckBox x:Name="SkipKnownFoldersCheckBox" Content="Skip known registry folders" IsChecked="True" Margin="0,0,12,0" />
+                        <CheckBox x:Name="ForceFullRescanCheckBox" Content="Force full rescan" IsChecked="False" Margin="0,0,12,0" />
+                        <Button Content="Rescan All (Ignore Cache)" Width="170" Margin="0,0,8,0" Click="RescanAllIgnoreCache_Click" />
+                        <Button Content="Rescan Known" Width="110" Margin="0,0,8,0" Click="RescanKnown_Click" />
+                        <Button Content="Cancel" Width="80" Margin="0,0,8,0" Click="CancelFolderScan_Click" />
+                        <Button Content="Clear Results" Width="100" Margin="0,0,8,0" Click="ClearScanResults_Click" />
+                        <Button Content="Clear Session Results" Width="145" Margin="0,0,8,0" Click="ClearSessionResults_Click" />
+                        <Button Content="Clear Session File" Width="130" Margin="0,0,8,0" Click="ClearSessionFile_Click" />
+                        <Button Content="Clear Scan Cache" Width="120" Click="ClearScanCache_Click" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Orientation="Vertical" Margin="0,0,0,8">
+                        <WrapPanel Margin="0,0,0,4">
+                            <TextBlock Text="Total Folders: " FontWeight="Bold" /><TextBlock x:Name="MetricTotalFoldersText" Margin="0,0,12,0" />
+                            <TextBlock Text="Valid Folders: " FontWeight="Bold" /><TextBlock x:Name="MetricFoldersWithValidText" Margin="0,0,12,0" />
+                            <TextBlock Text="Exe Candidates: " FontWeight="Bold" /><TextBlock x:Name="MetricExeCandidatesText" Margin="0,0,12,0" />
+                            <TextBlock Text="Main Selected: " FontWeight="Bold" /><TextBlock x:Name="MetricMainSelectedText" Margin="0,0,12,0" />
+                            <TextBlock Text="Tools: " FontWeight="Bold" /><TextBlock x:Name="MetricToolsSelectedText" Margin="0,0,12,0" />
+                            <TextBlock Text="Excluded: " FontWeight="Bold" /><TextBlock x:Name="MetricExcludedText" Margin="0,0,12,0" />
+                            <TextBlock Text="Hidden: " FontWeight="Bold" /><TextBlock x:Name="MetricHiddenText" Margin="0,0,12,0" />
+                            <TextBlock Text="Cached: " FontWeight="Bold" /><TextBlock x:Name="MetricCachedText" Margin="0,0,12,0" />
+                            <TextBlock Text="Skipped Known: " FontWeight="Bold" /><TextBlock x:Name="MetricSkippedKnownText" />
+                        </WrapPanel>
+                        <TextBlock x:Name="ScannerStatusText" Text="Ready." Margin="0,0,0,4" />
+                        <ProgressBar x:Name="ScannerProgressBar" Height="14" Visibility="Collapsed" IsIndeterminate="False" />
+                    </StackPanel>
+
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.42*" />
+                            <ColumnDefinition Width="0.58*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="0" Margin="0,0,8,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <DataGrid Grid.Row="0"
+                                      x:Name="FolderCandidatesGrid"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      SelectionMode="Extended"
+                                      SelectionUnit="FullRow"
+                                      SelectionChanged="FolderCandidatesGrid_SelectionChanged">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Folder" Binding="{Binding FolderName}" Width="*" />
+                                    <DataGridTextColumn Header="State" Binding="{Binding State}" Width="95" />
+                                    <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="80" />
+                                    <DataGridTextColumn Header="Main Exe" Binding="{Binding SelectedMainExeFile}" Width="190" />
+                                    <DataGridTextColumn Header="Valid" Binding="{Binding ValidExeCount}" Width="65" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,8,0,0">
+                                <Button Content="Add Selected Games (Main)" Width="185" Margin="0,0,8,0" Click="AddSelectedFoldersMainToRegistry_Click" />
+                                <Button Content="Add Selected Games (Tools)" Width="190" Margin="0,0,8,0" Click="AddSelectedFoldersToolsToRegistry_Click" />
+                                <Button Content="Add All Games (Main)" Width="140" Click="AddAllMainToRegistry_Click" />
+                            </StackPanel>
+                        </Grid>
+
+                        <DataGrid Grid.Column="1"
+                                  x:Name="FolderExeGrid"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="False"
+                                  SelectionMode="Single">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ExeName" Binding="{Binding ExeName}" Width="140" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Suggested Name" Binding="{Binding SuggestedName}" Width="150" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Exe Path" Binding="{Binding ExePath}" Width="*" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Size MB" Binding="{Binding SizeMb}" Width="80" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Kind" Binding="{Binding Kind}" Width="100" IsReadOnly="True" />
+                                <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="180" IsReadOnly="True" />
+                                <DataGridTemplateColumn Header="Main" Width="75">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Set Main" Padding="4,1" Click="SetMainCandidate_Click" CommandParameter="{Binding}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Tool" Width="60">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsToolSelected, Mode=TwoWay}" Click="ToolToggle_Click" HorizontalAlignment="Center" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Open" Width="65">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Open Folder" Padding="4,1" Click="OpenExeFolder_Click" CommandParameter="{Binding}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Launch" Width="70">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Launch" Padding="4,1" Click="LaunchExeTest_Click" CommandParameter="{Binding}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="Hide" Width="60">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Hide" Padding="6,1" Click="HideFolderExe_Click" CommandParameter="{Binding}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Review &amp; Export">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.56*" />
+                        <ColumnDefinition Width="0.44*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Row="0" Grid.ColumnSpan="2" Orientation="Vertical" Margin="0,0,0,8">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <TextBlock Text="Output folder:" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <TextBox x:Name="ShortcutOutputRootTextBox" Width="420" IsReadOnly="True" Margin="0,0,8,0" />
+                            <Button Content="Browse" Width="80" Margin="0,0,8,0" Click="BrowseShortcutOutputRoot_Click" />
+                            <Button Content="Generate Wrapper Shortcuts (Main)" Width="230" Margin="0,0,8,0" Click="GenerateMainWrapperShortcuts_Click" />
+                            <Button Content="Generate Wrapper Shortcuts (Tools)" Width="230" Margin="0,0,8,0" Click="GenerateToolsWrapperShortcuts_Click" />
+                            <Button Content="Generate Direct Shortcuts" Width="170" Margin="0,0,8,0" Click="GenerateDirectShortcuts_Click" />
+                            <Button Content="Open Output Folder" Width="140" Click="OpenShortcutFolder_Click" />
+                        </StackPanel>
+                        <Border BorderBrush="#DDD" BorderThickness="1" Padding="8">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="95" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="120" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" FontWeight="Bold" Margin="0,0,0,8" Text="Paths" />
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="GamesRoot:" />
+                                <TextBox Grid.Row="1" Grid.Column="1" x:Name="GamesRootTextBox" Margin="0,0,8,6" />
+                                <Button Grid.Row="1" Grid.Column="2" Content="Browse" Width="70" Margin="0,0,8,6" Click="BrowseGamesRoot_Click" />
+                                <Button Grid.Row="1" Grid.Column="3" Content="Save Paths" Width="100" Margin="0,0,0,6" Click="SavePathRoots_Click" />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="CacheRoot:" />
+                                <TextBox Grid.Row="2" Grid.Column="1" x:Name="CacheRootTextBox" Margin="0,0,8,6" />
+                                <Button Grid.Row="2" Grid.Column="2" Content="Browse" Width="70" Margin="0,0,8,6" Click="BrowseCacheRoot_Click" />
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="LaunchBox:" />
+                                <TextBox Grid.Row="3" Grid.Column="1" x:Name="LaunchBoxRootTextBox" Margin="0,0,8,0" />
+                                <Button Grid.Row="3" Grid.Column="2" Content="Browse" Width="70" Margin="0,0,8,0" Click="BrowseLaunchBoxRoot_Click" />
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              Grid.Column="0"
+                              x:Name="GamesGrid"
+                              Margin="0,0,8,0"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              SelectionUnit="FullRow"
+                              SelectionChanged="GamesGrid_SelectionChanged">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Display Name" Binding="{Binding DisplayName}" Width="190" />
+                            <DataGridCheckBoxColumn Header="From Shortcut" Binding="{Binding ImportedFromShortcut, Mode=OneWay}" Width="95" />
+                            <DataGridTextColumn Header="Game Folder" Binding="{Binding Install.GameFolderPath}" Width="*" />
+                            <DataGridTextColumn Header="Main Exe" Binding="{Binding Install.ExePath}" Width="240" />
+                            <DataGridCheckBoxColumn Header="Has Launch Command" Binding="{Binding Launch.Main.IsValid, Mode=OneWay}" Width="120" />
+                            <DataGridTextColumn Header="Tool Count" Binding="{Binding Install.ToolExePaths.Count}" Width="85" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border Grid.Row="1" Grid.Column="1" BorderBrush="#DDD" BorderThickness="1" Padding="10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="80" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" FontWeight="Bold" Margin="0,0,0,8" Text="Launch command for selected game" />
+                            <TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Text="Target:" />
+                            <TextBox Grid.Row="1" Grid.Column="1" x:Name="LaunchTargetTextBox" Margin="0,0,8,8" />
+                            <Button Grid.Row="1" Grid.Column="2" Content="Browse" Width="70" Margin="0,0,0,8" Click="BrowseLaunchTarget_Click" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Text="Args:" />
+                            <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" x:Name="LaunchArgumentsTextBox" Margin="0,0,0,8" />
+
+                            <TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Text="WorkDir:" />
+                            <TextBox Grid.Row="3" Grid.Column="1" x:Name="LaunchWorkingDirTextBox" Margin="0,0,8,8" />
+                            <Button Grid.Row="3" Grid.Column="2" Content="Browse" Width="70" Margin="0,0,0,8" Click="BrowseLaunchWorkingDir_Click" />
+
+                            <StackPanel Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,0,0,8">
+                                <Button Content="Save Launch Command" Width="150" Margin="0,0,8,0" Click="SaveLaunchContract_Click" />
+                                <Button Content="Reset to detected main exe" Width="175" Margin="0,0,8,0" Click="UseInstallFallbackContract_Click" />
+                                <Button Content="Use imported shortcut command" Width="195" Margin="0,0,8,0" Click="ApplySelectedShortcutAsLaunchContract_Click" />
+                                <Button Content="Preview Resolved" Width="130" Click="PreviewResolvedLaunch_Click" />
+                            </StackPanel>
+
+                            <TextBlock Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Foreground="#666" Text="Tokens: {GamesRoot}, {CacheRoot}, {LaunchBoxRoot}, {GameFolder}, {MainExeDir}, {RelayDir}" />
+                            <TextBlock Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" x:Name="GameLaunchValidationText" />
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
